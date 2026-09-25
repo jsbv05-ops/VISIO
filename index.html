@@ -188,7 +188,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 .card .top .pill{z-index:1}
 
 /* STICKERS */
-.stk{position:absolute;z-index:6;width:var(--w,150px);height:auto;filter:drop-shadow(0 14px 18px rgba(0,0,0,.55));opacity:0;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--r,0deg)) scale(.3);transition:transform .55s cubic-bezier(.2,1.7,.4,1),opacity .25s;cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none}
+.stk{position:absolute;z-index:6;height:var(--h,190px);width:auto;filter:drop-shadow(0 14px 18px rgba(0,0,0,.55));opacity:0;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--r,0deg)) scale(.3);transition:transform .55s cubic-bezier(.2,1.7,.4,1),opacity .25s;cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none}
 .stk.in{opacity:1;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--r,0deg)) scale(1)}
 .stk.drag{cursor:grabbing;transition:none;filter:drop-shadow(0 26px 30px rgba(0,0,0,.6));z-index:40}
 .stk.in:hover{animation:wiggle .45s}
@@ -252,7 +252,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 @media (max-width:900px){
   .navlinks{display:none}
   .dropbtn{margin-left:auto;padding:9px 12px;font-size:11px}
-  .stk{width:calc(var(--w,150px)*.62)}
+  .stk{height:calc(var(--h,190px)*.62)}
   .cartbtn{margin-left:0}
   .hero{grid-template-columns:1fr;padding-top:110px;min-height:auto}
   .stack{height:420px;margin-top:10px}
@@ -310,7 +310,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
     <div class="tag t2"><div class="num">EXP. 02</div><h3>Maracumango</h3><p>Maracuyá + mango. Mala idea, gran decisión.</p><div class="bar"></div></div>
     <div class="tag t3"><div class="num">EXP. 03</div><h3>Mora visiosa</h3><p>Mora + arequipe. Empezó con una cucharada.</p><div class="bar"></div></div>
     <div class="stamp">No es un postre</div>
-    <img class="stk" data-stk src="assets/sticker-benny-1.webp" alt="" aria-hidden="true" draggable="false" style="--w:190px;--r:-10deg;left:-4%;bottom:-6%">
+    <img class="stk" data-stk src="assets/sticker-benny-1.webp" alt="" aria-hidden="true" draggable="false" style="--h:230px;--r:-10deg;left:-4%;bottom:-6%">
   </div>
 </header>
 
@@ -320,7 +320,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </div></div></div>
 
 <section id="test" class="test wrap">
-  <img class="stk" data-stk src="assets/sticker-tuki-1.webp" alt="" aria-hidden="true" draggable="false" style="--w:140px;--r:12deg;right:3%;top:10px">
+  <img class="stk" data-stk src="assets/sticker-tuki-1.webp" alt="" aria-hidden="true" draggable="false" style="--h:200px;--r:12deg;right:3%;top:10px">
   <div class="test-head">
     <div><div class="label">El test</div><h2 class="display">¿Qué VISIO<br>te da?</h2></div>
     <p>Cuatro preguntas, cero juicio. Al final te decimos qué VISIO te toca y lo mandas directo a tu pedido.</p>
@@ -342,14 +342,14 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </section>
 
 <section id="sabores" class="flavors-sec wrap">
-  <img class="stk" data-stk src="assets/sticker-muelas-1.webp" alt="" aria-hidden="true" draggable="false" style="--w:160px;--r:-8deg;right:6%;top:0">
+  <img class="stk" data-stk src="assets/sticker-muelas-1.webp" alt="" aria-hidden="true" draggable="false" style="--h:180px;--r:-8deg;right:6%;top:0">
   <div class="label">Los sabores</div>
   <h2 class="display">Tres VISIOS.<br>¿Cuál te da?</h2>
   <div class="flavors" id="flavors"></div>
 </section>
 
 <section id="como-se-come" class="eat wrap">
-  <img class="stk" data-stk src="assets/sticker-tuki-2.webp" alt="" aria-hidden="true" draggable="false" style="--w:140px;--r:-14deg;left:40%;top:60px">
+  <img class="stk" data-stk src="assets/sticker-tuki-2.webp" alt="" aria-hidden="true" draggable="false" style="--h:190px;--r:-14deg;left:40%;top:60px">
   <div class="eat-head">
     <div>
       <div class="label">El ritual</div>
@@ -371,7 +371,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </section>
 
 <section id="tarjeta" class="card-sec wrap">
-  <img class="stk" data-stk src="assets/sticker-benny-2.webp" alt="" aria-hidden="true" draggable="false" style="--w:160px;--r:9deg;right:3%;top:40px">
+  <img class="stk" data-stk src="assets/sticker-benny-2.webp" alt="" aria-hidden="true" draggable="false" style="--h:210px;--r:9deg;right:3%;top:40px">
   <div>
     <div class="label">Tarjeta VISIO</div>
     <h2 class="display">Ya no eres cliente.<br><span style="color:var(--red)">Eres cómplice.</span></h2>
@@ -405,7 +405,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </section>
 
 <section class="manifesto wrap">
-  <img class="stk" data-stk src="assets/sticker-muelas-2.webp" alt="" aria-hidden="true" draggable="false" style="--w:150px;--r:-12deg;left:5%;bottom:30px">
+  <img class="stk" data-stk src="assets/sticker-muelas-2.webp" alt="" aria-hidden="true" draggable="false" style="--h:190px;--r:-12deg;left:5%;bottom:30px">
   <h2 class="display">No te resistas.<br>No es la idea.</h2>
   <p>VISIO nació para convertir el antojo en una experiencia: intensa, visual y deliciosamente exagerada. Hecho para caer.</p>
   <p class="stk-hint" style="color:#000;opacity:.6;font-size:15px">psst… los stickers se pueden mover</p>
@@ -447,9 +447,9 @@ const CONFIG = {
 };
 
 const FLAVORS = {
-  choco:{img:"assets/sabor-chocolate.jpg",name:"Pecado de Chocolate",note:"Nutella",line:"El que sabes que no deberías pedir.",desc:"Cookie cuchareable con Nutella. El clásico que nunca falla: intenso, espeso y sin testigos.",badge:"Pecado",bg:"var(--choco)"},
-  mango:{img:"assets/sabor-maracumango.jpg",name:"Maracumango",note:"Maracuyá + mango",line:"Una mala decisión que volverías a tomar.",desc:"Maracuyá con mango. Tropical, ácido y dulce a la vez. El que nadie espera y todos repiten.",badge:"Maracu mango",bg:"var(--mango)"},
-  mora:{img:"assets/sabor-mora.jpg",name:"Mora Visiosa",note:"Mora + arequipe",line:"Empezó con una cucharada. Terminó el vaso.",desc:"Mora con arequipe. Dulce, con carácter y peligrosamente fácil de terminar.",badge:"Mora visiosa",bg:"var(--mora)"}
+  choco:{img:"assets/Cuchara%20de%20chocolate%20fundido.png",name:"Pecado de Chocolate",note:"Nutella",line:"El que sabes que no deberías pedir.",desc:"Cookie cuchareable con Nutella. El clásico que nunca falla: intenso, espeso y sin testigos.",badge:"Pecado",bg:"var(--choco)"},
+  mango:{img:"assets/Crumble%20de%20mango%20y%20maracuy%C3%A1%20brillante.png",name:"Maracumango",note:"Maracuyá + mango",line:"Una mala decisión que volverías a tomar.",desc:"Maracuyá con mango. Tropical, ácido y dulce a la vez. El que nadie espera y todos repiten.",badge:"Maracu mango",bg:"var(--mango)"},
+  mora:{img:"assets/Postre%20de%20moras%20con%20caramelo%20fundido.png",name:"Mora Visiosa",note:"Mora + arequipe",line:"Empezó con una cucharada. Terminó el vaso.",desc:"Mora con arequipe. Dulce, con carácter y peligrosamente fácil de terminar.",badge:"Mora visiosa",bg:"var(--mora)"}
 };
 
 const $ = s => document.querySelector(s);

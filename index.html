@@ -174,6 +174,35 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 .footer .right{text-align:right}
 .footer a:hover{color:var(--red)}
 
+/* DROP BTN */
+.dropbtn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:2px solid var(--cream);border-radius:999px;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.dropbtn:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(255,0,51,.7);animation:pulse 1.6s infinite}
+.dropbtn:hover{background:var(--cream);color:#000}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(255,0,51,0)}100%{box-shadow:0 0 0 0 rgba(255,0,51,0)}}
+
+/* FOTOS SABORES */
+.card .top{height:320px}
+.card .top img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.card:hover .top img{transform:scale(1.05)}
+.card .top:has(img):after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent 45%)}
+.card .top .pill{z-index:1}
+
+/* STICKERS */
+.stk{position:absolute;z-index:6;width:var(--w,150px);height:auto;filter:drop-shadow(0 14px 18px rgba(0,0,0,.55));opacity:0;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--r,0deg)) scale(.3);transition:transform .55s cubic-bezier(.2,1.7,.4,1),opacity .25s;cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none}
+.stk.in{opacity:1;transform:translate(var(--dx,0),var(--dy,0)) rotate(var(--r,0deg)) scale(1)}
+.stk.drag{cursor:grabbing;transition:none;filter:drop-shadow(0 26px 30px rgba(0,0,0,.6));z-index:40}
+.stk.in:hover{animation:wiggle .45s}
+@keyframes wiggle{25%{rotate:-6deg}75%{rotate:6deg}}
+.stk-hint{font-family:var(--hand);color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion:reduce){.stk{transition:opacity .2s}.stk.in:hover{animation:none}}
+
+/* COMPROBANTE */
+.drop-zone{display:grid;place-items:center;text-align:center;gap:6px;border:2px dashed #3a3a3a;border-radius:14px;padding:18px;cursor:pointer;color:var(--muted);font-size:14px}
+.drop-zone:hover{border-color:var(--red)}
+.drop-zone b{color:var(--cream)}
+.drop-zone img{max-height:160px;border-radius:10px}
+.fee{font-size:13px;color:var(--muted);margin:6px 0 0}
+
 /* BARRA DE PEDIDO */
 .cartbar{position:fixed;left:50%;bottom:16px;transform:translate(-50%,140%);z-index:60;display:flex;align-items:center;gap:16px;background:var(--cream);color:#000;border:3px solid #000;border-radius:999px;padding:8px 8px 8px 22px;box-shadow:0 16px 40px rgba(0,0,0,.6);transition:transform .25s;width:min(560px,calc(100% - 32px))}
 .cartbar.show{transform:translate(-50%,0)}
@@ -222,11 +251,13 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 @media (max-width:1100px){.ritual{grid-template-columns:repeat(4,1fr)}}
 @media (max-width:900px){
   .navlinks{display:none}
-  .cartbtn{margin-left:auto}
+  .dropbtn{margin-left:auto;padding:9px 12px;font-size:11px}
+  .stk{width:calc(var(--w,150px)*.62)}
+  .cartbtn{margin-left:0}
   .hero{grid-template-columns:1fr;padding-top:110px;min-height:auto}
   .stack{height:420px;margin-top:10px}
   .tag{width:200px;padding:18px}
-  .tag h3{font-size:30px}
+  .tag h3{font-size:26px;overflow-wrap:anywhere}
   .tag.t1{top:0;left:0}.tag.t2{top:120px;right:0}.tag.t3{top:245px;left:8%}
   .opts,.flavors{grid-template-columns:1fr}
   .result{grid-template-columns:1fr;justify-items:start}
@@ -242,7 +273,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 }
 @media (max-width:420px){
   .tag{width:180px;padding:16px}
-  .tag h3{font-size:27px}
+  .tag h3{font-size:23px}
   .count div{min-width:74px}
   .count b{font-size:40px}
   .two{grid-template-columns:1fr}
@@ -259,6 +290,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
     <a href="#como-se-come">Cómo se come</a>
     <a href="#tarjeta">Tarjeta VISIO</a>
   </div>
+  <a class="dropbtn" href="drop-002.html">DROP-002</a>
   <button class="btn btn-red cartbtn" type="button" data-open-cart>Pedido <b id="navCount">0</b></button>
 </nav>
 
@@ -278,6 +310,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
     <div class="tag t2"><div class="num">EXP. 02</div><h3>Maracumango</h3><p>Maracuyá + mango. Mala idea, gran decisión.</p><div class="bar"></div></div>
     <div class="tag t3"><div class="num">EXP. 03</div><h3>Mora visiosa</h3><p>Mora + arequipe. Empezó con una cucharada.</p><div class="bar"></div></div>
     <div class="stamp">No es un postre</div>
+    <img class="stk" data-stk src="assets/sticker-benny-1.webp" alt="" aria-hidden="true" draggable="false" style="--w:190px;--r:-10deg;left:-4%;bottom:-6%">
   </div>
 </header>
 
@@ -287,6 +320,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </div></div></div>
 
 <section id="test" class="test wrap">
+  <img class="stk" data-stk src="assets/sticker-tuki-1.webp" alt="" aria-hidden="true" draggable="false" style="--w:140px;--r:12deg;right:3%;top:10px">
   <div class="test-head">
     <div><div class="label">El test</div><h2 class="display">¿Qué VISIO<br>te da?</h2></div>
     <p>Cuatro preguntas, cero juicio. Al final te decimos qué VISIO te toca y lo mandas directo a tu pedido.</p>
@@ -308,12 +342,14 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </section>
 
 <section id="sabores" class="flavors-sec wrap">
+  <img class="stk" data-stk src="assets/sticker-muelas-1.webp" alt="" aria-hidden="true" draggable="false" style="--w:160px;--r:-8deg;right:6%;top:0">
   <div class="label">Los sabores</div>
   <h2 class="display">Tres VISIOS.<br>¿Cuál te da?</h2>
   <div class="flavors" id="flavors"></div>
 </section>
 
 <section id="como-se-come" class="eat wrap">
+  <img class="stk" data-stk src="assets/sticker-tuki-2.webp" alt="" aria-hidden="true" draggable="false" style="--w:140px;--r:-14deg;left:40%;top:60px">
   <div class="eat-head">
     <div>
       <div class="label">El ritual</div>
@@ -335,6 +371,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </section>
 
 <section id="tarjeta" class="card-sec wrap">
+  <img class="stk" data-stk src="assets/sticker-benny-2.webp" alt="" aria-hidden="true" draggable="false" style="--w:160px;--r:9deg;right:3%;top:40px">
   <div>
     <div class="label">Tarjeta VISIO</div>
     <h2 class="display">Ya no eres cliente.<br><span style="color:var(--red)">Eres cómplice.</span></h2>
@@ -368,14 +405,16 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 </section>
 
 <section class="manifesto wrap">
+  <img class="stk" data-stk src="assets/sticker-muelas-2.webp" alt="" aria-hidden="true" draggable="false" style="--w:150px;--r:-12deg;left:5%;bottom:30px">
   <h2 class="display">No te resistas.<br>No es la idea.</h2>
   <p>VISIO nació para convertir el antojo en una experiencia: intensa, visual y deliciosamente exagerada. Hecho para caer.</p>
+  <p class="stk-hint" style="color:#000;opacity:.6;font-size:15px">psst… los stickers se pueden mover</p>
 </section>
 
 <footer class="footer wrap">
   <div><img src="assets/visio-logo.png" alt="VISIO"></div>
   <nav><a href="#test">Test</a><a href="#sabores">Sabores</a><a href="#como-se-come">Cómo se come</a><a href="#tarjeta">Tarjeta</a></nav>
-  <div class="right"><a href="https://www.instagram.com/esunvisio/" target="_blank" rel="noopener">Instagram · esunvisio</a><br>© <span id="yr"></span> VISIO</div>
+  <div class="right"><a href="https://www.instagram.com/esunvisio/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@esunvisio" target="_blank" rel="noopener">TikTok</a> · <a href="drop-002.html">DROP-002</a><br>© <span id="yr"></span> VISIO</div>
 </footer>
 
 <div class="cartbar" id="cartbar">
@@ -399,16 +438,18 @@ const CONFIG = {
   IG_USER: "esunvisio",                  // Instagram
   CARD_URL: "https://take.cards/rnlUE",  // Tarjeta de sellos
   ORDERS_ENDPOINT: "",                   // URL de la Hoja de Google (Apps Script). Vacío = no se guarda en la hoja
-  NEQUI_LINK: "",                        // Link de pago Nequi (tarjeta / Nequi / PSE)
   BREB_KEY: "",                          // Llave Bre-B para transferencias
   BREB_QR: "",                           // Imagen del QR, ej: "assets/qr-breb.png"
+  CARD_LINK: "",                         // Link de pago con tarjeta (Wompi/Bold). Vacío = no se muestra
+  CARD_FEE_PCT: 0,                       // Recargo por pagar con tarjeta, en %. Ej: 1.8 (0 = sin recargo)
+  TIKTOK: "https://www.tiktok.com/@esunvisio",
   HALLOWEEN: new Date("2026-10-31T00:00:00-05:00")
 };
 
 const FLAVORS = {
-  choco:{name:"Pecado de Chocolate",note:"Nutella",line:"El que sabes que no deberías pedir.",desc:"Cookie cuchareable con Nutella. El clásico que nunca falla: intenso, espeso y sin testigos.",badge:"Pecado",bg:"var(--choco)"},
-  mango:{name:"Maracumango",note:"Maracuyá + mango",line:"Una mala decisión que volverías a tomar.",desc:"Maracuyá con mango. Tropical, ácido y dulce a la vez. El que nadie espera y todos repiten.",badge:"Maracu mango",bg:"var(--mango)"},
-  mora:{name:"Mora Visiosa",note:"Mora + arequipe",line:"Empezó con una cucharada. Terminó el vaso.",desc:"Mora con arequipe. Dulce, con carácter y peligrosamente fácil de terminar.",badge:"Mora visiosa",bg:"var(--mora)"}
+  choco:{img:"assets/sabor-chocolate.jpg",name:"Pecado de Chocolate",note:"Nutella",line:"El que sabes que no deberías pedir.",desc:"Cookie cuchareable con Nutella. El clásico que nunca falla: intenso, espeso y sin testigos.",badge:"Pecado",bg:"var(--choco)"},
+  mango:{img:"assets/sabor-maracumango.jpg",name:"Maracumango",note:"Maracuyá + mango",line:"Una mala decisión que volverías a tomar.",desc:"Maracuyá con mango. Tropical, ácido y dulce a la vez. El que nadie espera y todos repiten.",badge:"Maracu mango",bg:"var(--mango)"},
+  mora:{img:"assets/sabor-mora.jpg",name:"Mora Visiosa",note:"Mora + arequipe",line:"Empezó con una cucharada. Terminó el vaso.",desc:"Mora con arequipe. Dulce, con carácter y peligrosamente fácil de terminar.",badge:"Mora visiosa",bg:"var(--mora)"}
 };
 
 const $ = s => document.querySelector(s);
@@ -447,7 +488,7 @@ Object.entries(FLAVORS).forEach(([k,f],i) => {
   const el = document.createElement("article");
   el.className = "card " + k;
   el.innerHTML =
-    `<div class="top"><div class="big">V</div><div class="pill">Nº 0${i+1} · ${f.note}</div></div>
+    `<div class="top"><div class="big">V</div><img src="${f.img}" alt="${f.name}" loading="lazy" onerror="this.remove()"><div class="pill">Nº 0${i+1} · ${f.note}</div></div>
      <div class="body"><h3>${f.name}</h3><div class="line">${f.line}</div><p>${f.desc}</p>
      <div class="foot"><div class="price">${money(CONFIG.PRICE)}<small>c/u</small></div>${qtyHTML(k)}</div></div>`;
   $("#flavors").appendChild(el);
@@ -502,14 +543,15 @@ $("#again").onclick=()=>{step=0;picks=[];renderQ();};
 $("#rAdd").onclick=()=>{ setQty(result, cart[result]+1); openPanel(); };
 renderQ();
 
-/* ---------- Panel: pedido → datos → pago ---------- */
-let view="cart", order=null;
+/* ---------- Panel: pedido → datos → pago → listo ---------- */
+let view="cart", order=null, receipt=null;
 const form={nombre:"",telefono:"",instagram:"",direccion:"",barrio:"",notas:"",pago:""};
 function openPanel(){ view = order ? "done" : "cart"; $("#panel").classList.add("show"); $("#overlay").classList.add("show"); $("#panel").setAttribute("aria-hidden","false"); render(); sync(); }
 function closePanel(){ $("#panel").classList.remove("show"); $("#overlay").classList.remove("show"); $("#panel").setAttribute("aria-hidden","true"); sync(); }
 $("#closeCart").onclick=closePanel; $("#overlay").onclick=closePanel;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePanel(); });
-function render(){ ({cart:renderCart,form:renderForm,done:renderDone})[view](); }
+function render(){ ({cart:renderCart,form:renderForm,pay:renderPay,done:renderDone})[view](); $("#pbody").scrollTop=0; }
+const cardFee = () => Math.round(total()*CONFIG.CARD_FEE_PCT/100);
 
 function renderCart(){
   $("#panelTitle").textContent="Tu pedido";
@@ -522,18 +564,10 @@ function renderCart(){
   $("#toForm").onclick=()=>{view="form";render();};
 }
 
-function payOptions(){
-  const o=[];
-  if (CONFIG.NEQUI_LINK) o.push(["link","Tarjeta, Nequi o PSE","Pagas en el link seguro de Nequi"]);
-  if (CONFIG.BREB_KEY || CONFIG.BREB_QR) o.push(["breb","Transferencia · Llave o QR (Bre-B)","Desde cualquier banco o billetera"]);
-  if (!o.length) o.push(["chat","Te enviamos los datos de pago por DM","Tarjeta, transferencia, llave o QR"]);
-  return o;
-}
 function renderForm(){
   $("#panelTitle").textContent="Tus datos";
-  const opts=payOptions(); if(!opts.find(x=>x[0]===form.pago)) form.pago=opts[0][0];
   $("#pbody").innerHTML=`
-    <p class="note">${count()} VISIO${count()>1?"S":""} · <b style="color:var(--cream)">${money(total())}</b> + domicilio</p>
+    <p class="note">Paso 1 de 2 · ${count()} VISIO${count()>1?"S":""} · <b style="color:var(--cream)">${money(total())}</b> + domicilio</p>
     <div class="fields">
       <label>Nombre<input id="f-nombre" autocomplete="name" value="${esc(form.nombre)}"></label>
       <div class="two">
@@ -543,30 +577,104 @@ function renderForm(){
       <label>Dirección<input id="f-direccion" autocomplete="street-address" value="${esc(form.direccion)}"></label>
       <label>Barrio<input id="f-barrio" value="${esc(form.barrio)}"></label>
       <label>Notas (opcional)<textarea id="f-notas" rows="2" placeholder="Torre, apto, hora, quién te recomendó…">${esc(form.notas)}</textarea></label>
-      <div><div class="label" style="margin:8px 0 4px">¿Cómo pagas?</div>
-        <div class="pays">${opts.map(o=>`<label class="pay"><input type="radio" name="pago" value="${o[0]}" ${form.pago===o[0]?"checked":""}><span><b>${o[1]}</b><small>${o[2]}</small></span></label>`).join("")}</div>
-      </div>
     </div>
     <p class="err" id="err"></p>`;
+  $("#pfoot").innerHTML=`<div class="actions" style="flex-wrap:nowrap"><button class="btn btn-ghost" type="button" id="back">Atrás</button><button class="btn btn-red" style="flex:1" type="button" id="next">Ir a pagar</button></div>`;
+  $("#back").onclick=()=>{saveForm();view="cart";render();};
+  $("#next").onclick=()=>{
+    saveForm();
+    const names={nombre:"nombre",telefono:"celular",direccion:"dirección",barrio:"barrio"};
+    const miss=Object.keys(names).filter(k=>!form[k]);
+    if (miss.length){ $("#err").textContent="Completa: "+miss.map(k=>names[k]).join(", ")+"."; return; }
+    if (form.telefono.replace(/\D/g,"").length<7){ $("#err").textContent="Revisa el número de celular."; return; }
+    view="pay"; render();
+  };
+}
+function saveForm(){ ["nombre","telefono","instagram","direccion","barrio","notas"].forEach(k=>form[k]=$("#f-"+k).value.trim()); }
+
+function payOptions(){
+  const o=[];
+  if (CONFIG.BREB_KEY || CONFIG.BREB_QR) o.push(["breb","Transferencia · Llave o QR (Bre-B)","Desde cualquier banco o billetera. Sin recargo."]);
+  if (CONFIG.CARD_LINK) o.push(["card","Tarjeta de crédito o débito", CONFIG.CARD_FEE_PCT ? `Incluye ${String(CONFIG.CARD_FEE_PCT).replace(".",",")}% de comisión de la pasarela.` : "Pago seguro en línea."]);
+  if (!o.length) o.push(["chat","Te enviamos los datos de pago por DM","Transferencia, llave o QR"]);
+  return o;
+}
+function payTotal(){ return form.pago==="card" ? total()+cardFee() : total(); }
+
+function renderPay(){
+  $("#panelTitle").textContent="Pago";
+  const opts=payOptions(); if(!opts.find(x=>x[0]===form.pago)) form.pago=opts[0][0];
+  let box="";
+  if (form.pago==="breb") box=`
+    <div class="paybox">
+      <div class="label">Transfiere ${money(total())}</div>
+      ${CONFIG.BREB_KEY?`<p class="note" style="margin:8px 0 2px">Llave Bre-B</p><div class="k">${esc(CONFIG.BREB_KEY)}</div><button class="again" style="margin:4px 0 0" type="button" id="copyKey">Copiar llave</button>`:""}
+      ${CONFIG.BREB_QR?`<p class="note" style="margin:12px 0 0">o escanea el QR</p><img src="${CONFIG.BREB_QR}" alt="QR de pago Bre-B">`:""}
+    </div>`;
+  else if (form.pago==="card") box=`
+    <div class="paybox">
+      <div class="label">Paga ${money(payTotal())} con tarjeta</div>
+      ${CONFIG.CARD_FEE_PCT?`<p class="fee">${money(total())} + ${money(cardFee())} de comisión de la pasarela</p>`:""}
+      <a class="btn btn-red" style="margin-top:12px" href="${CONFIG.CARD_LINK}" target="_blank" rel="noopener">Abrir pago con tarjeta ↗</a>
+    </div>`;
+  else box=`<div class="paybox"><p class="note">Confirma tu pedido y te respondemos por DM con los datos para pagar.</p></div>`;
+  const needsReceipt = form.pago!=="chat";
+  $("#pbody").innerHTML=`
+    <p class="note">Paso 2 de 2 · ${count()} VISIO${count()>1?"S":""} + domicilio (se cuadra por chat)</p>
+    <div class="fields"><div><div class="label" style="margin:8px 0 4px">¿Cómo pagas?</div>
+      <div class="pays">${opts.map(o=>`<label class="pay"><input type="radio" name="pago" value="${o[0]}" ${form.pago===o[0]?"checked":""}><span><b>${o[1]}</b><small>${o[2]}</small></span></label>`).join("")}</div>
+    </div></div>
+    ${box}
+    ${needsReceipt?`<div class="label" style="margin:18px 0 8px">Adjunta tu comprobante</div>
+    <label class="drop-zone" id="dz">${receipt?`<img src="${receipt.preview}" alt="Comprobante"><b>Comprobante listo ✓</b><span>Toca para cambiarlo</span>`:`<b>Subir foto o captura del pago</b><span>JPG, PNG o PDF</span>`}
+      <input type="file" id="rcpt" accept="image/*,application/pdf" hidden></label>`:""}
+    <p class="err" id="err"></p>`;
+  document.querySelectorAll('input[name="pago"]').forEach(r=>r.onchange=()=>{form.pago=r.value;renderPay();});
+  const ck=$("#copyKey"); if(ck) ck.onclick=()=>{ try{navigator.clipboard.writeText(CONFIG.BREB_KEY); ck.textContent="¡Copiada!";}catch(e){} };
+  const inp=$("#rcpt"); if(inp) inp.onchange=async()=>{ const f=inp.files[0]; if(!f) return; $("#err").textContent="Procesando comprobante…"; try{ receipt=await readReceipt(f); renderPay(); }catch(e){ $("#err").textContent="No pudimos leer ese archivo. Prueba con una foto o captura."; } };
   $("#pfoot").innerHTML=`<div class="actions" style="flex-wrap:nowrap"><button class="btn btn-ghost" type="button" id="back">Atrás</button><button class="btn btn-red" style="flex:1" type="button" id="confirm">Confirmar pedido</button></div>`;
-  $("#back").onclick=()=>{save();view="cart";render();};
+  $("#back").onclick=()=>{view="form";render();};
   $("#confirm").onclick=submit;
 }
-function save(){ ["nombre","telefono","instagram","direccion","barrio","notas"].forEach(k=>form[k]=$("#f-"+k).value.trim()); const r=document.querySelector('input[name="pago"]:checked'); if(r) form.pago=r.value; }
+
+/* Comprime la imagen del comprobante para enviarla liviana */
+function readReceipt(file){
+  return new Promise((resolve,reject)=>{
+    if (file.size>8*1024*1024) return reject(new Error("big"));
+    const r=new FileReader();
+    r.onerror=reject;
+    r.onload=()=>{
+      if (file.type==="application/pdf") return resolve({data:r.result,name:file.name,preview:"data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150"><rect width="120" height="150" rx="10" fill="#222"/><text x="60" y="85" font-size="28" fill="#F2EAD8" text-anchor="middle" font-family="Arial">PDF</text></svg>')});
+      const img=new Image();
+      img.onerror=reject;
+      img.onload=()=>{
+        const max=1400, k=Math.min(1,max/Math.max(img.width,img.height));
+        const c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+        const d=c.toDataURL("image/jpeg",.8);
+        resolve({data:d,name:(file.name||"comprobante").replace(/\.\w+$/,"")+".jpg",preview:d});
+      };
+      img.src=r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
 
 async function submit(){
-  save();
-  const miss=["nombre","telefono","direccion","barrio"].filter(k=>!form[k]);
-  const names={nombre:"nombre",telefono:"celular",direccion:"dirección",barrio:"barrio"};
-  if (miss.length){ $("#err").textContent="Completa: "+miss.map(k=>names[k]).join(", ")+"."; return; }
-  if (form.telefono.replace(/\D/g,"").length<7){ $("#err").textContent="Revisa el número de celular."; return; }
+  const needsReceipt = form.pago!=="chat";
+  if (needsReceipt && !receipt){ $("#err").textContent="Adjunta el comprobante de pago para confirmar."; return; }
   const code="VIS-"+Date.now().toString(36).slice(-4).toUpperCase()+Math.floor(Math.random()*90+10);
   const detalle=Object.keys(FLAVORS).filter(k=>cart[k]).map(k=>cart[k]+" "+FLAVORS[k].name).join(", ");
   const payName=(payOptions().find(o=>o[0]===form.pago)||[])[1]||"";
-  order={codigo:code,fecha:new Date().toLocaleString("es-CO"),nombre:form.nombre,telefono:form.telefono,instagram:form.instagram.replace(/^@/,""),direccion:form.direccion,barrio:form.barrio,notas:form.notas,pedido:detalle,cantidad:count(),total:total(),metodo:payName,estado:"Pendiente de pago"};
+  order={codigo:code,fecha:new Date().toLocaleString("es-CO"),nombre:form.nombre,telefono:form.telefono,instagram:form.instagram.replace(/^@/,""),direccion:form.direccion,barrio:form.barrio,notas:form.notas,pedido:detalle,cantidad:count(),total:payTotal(),metodo:payName,estado:needsReceipt?"Comprobante recibido":"Pendiente de pago"};
   $("#confirm").disabled=true; $("#confirm").textContent="Enviando…";
+  order.guardado=false;
   if (CONFIG.ORDERS_ENDPOINT){
-    try{ await fetch(CONFIG.ORDERS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(order)}); }catch(e){}
+    try{
+      await fetch(CONFIG.ORDERS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({...order,comprobante:receipt?receipt.data:"",comprobanteNombre:receipt?receipt.name:""})});
+      order.guardado=true;
+    }catch(e){}
   }
   view="done"; render();
 }
@@ -574,30 +682,25 @@ function orderText(){
   return `Hola VISIO 👋 Acabo de hacer el pedido ${order.codigo} en la página.\n`+
     `Pedido: ${order.pedido}\nTotal: ${money(order.total)} + domicilio\n`+
     `Nombre: ${order.nombre}\nCel: ${order.telefono}\nDirección: ${order.direccion}, ${order.barrio}\n`+
-    (order.notas?`Notas: ${order.notas}\n`:"")+`Pago: ${order.metodo}`;
+    (order.notas?`Notas: ${order.notas}\n`:"")+`Pago: ${order.metodo}`+
+    (receipt ? (order.guardado?"\nComprobante: adjuntado en la página ✅":"\nTe envío el comprobante por aquí 👇") : "");
 }
 function renderDone(){
   $("#panelTitle").textContent="¡Listo!";
-  let pay;
-  if (form.pago==="link") pay=`<div class="paybox"><div class="label">Paga aquí</div><p class="note" style="margin:6px 0 12px">Tarjeta, Nequi o PSE. En la referencia escribe <b style="color:var(--cream)">${order.codigo}</b>.</p><a class="btn btn-red" href="${CONFIG.NEQUI_LINK}" target="_blank" rel="noopener">Pagar ${money(order.total)} ↗</a></div>`;
-  else if (form.pago==="breb") pay=`<div class="paybox"><div class="label">Transfiere ${money(order.total)}</div>${CONFIG.BREB_KEY?`<p class="note" style="margin:8px 0 2px">Llave Bre-B</p><div class="k">${esc(CONFIG.BREB_KEY)}</div><button class="again" style="margin:4px 0 0" type="button" id="copyKey">Copiar llave</button>`:""}${CONFIG.BREB_QR?`<img src="${CONFIG.BREB_QR}" alt="QR de pago Bre-B">`:""}<p class="note">En el mensaje de la transferencia escribe <b style="color:var(--cream)">${order.codigo}</b>.</p></div>`;
-  else pay=`<div class="paybox"><div class="label">Pago</div><p class="note" style="margin-top:6px">Te respondemos por DM con los datos para pagar (tarjeta, transferencia, llave o QR).</p></div>`;
+  const sendReceiptHere = receipt && !order.guardado;
   $("#pbody").innerHTML=`<div class="done">
     <div class="label">Pedido recibido</div>
     <h3>Ya casi es tuyo, ${esc(order.nombre.split(" ")[0])}.</h3>
     <div class="code">${order.codigo}</div>
     <p class="note">${esc(order.pedido)} · <b style="color:var(--cream)">${money(order.total)}</b> + domicilio</p>
-    ${pay}
-    <div class="label" style="margin-top:18px">Últimos pasos</div>
+    <div class="label" style="margin-top:22px">Último paso</div>
     <ol class="stepsmini">
-      ${form.pago==="chat"?"":`<li>Paga ${money(order.total)} con el código ${order.codigo}.</li>`}
-      <li>Avísanos por Instagram con el botón de abajo${form.pago==="chat"?"":" y adjunta el comprobante"}.</li>
-      <li>Te confirmamos el domicilio y sale tu VISIO.</li>
+      <li>Avísanos por Instagram con el botón de abajo${sendReceiptHere?" y adjunta la foto del comprobante en el chat":""}.</li>
+      <li>${form.pago==="chat"?"Te mandamos los datos de pago y el valor del domicilio.":"Revisamos tu pago, te confirmamos el domicilio y sale tu VISIO."}</li>
     </ol></div>`;
   $("#pfoot").innerHTML=`<a class="btn btn-red" style="width:100%" id="igDone" href="${dm(orderText())}" target="_blank" rel="noopener">Avisar por Instagram ↗</a><button class="again" style="display:block;margin:12px auto 0" type="button" id="newOrder">Hacer otro pedido</button>`;
   $("#igDone").addEventListener("click",()=>{ try{navigator.clipboard.writeText(orderText());}catch(e){} });
-  const ck=$("#copyKey"); if(ck) ck.onclick=()=>{ try{navigator.clipboard.writeText(CONFIG.BREB_KEY); ck.textContent="¡Copiada!";}catch(e){} };
-  $("#newOrder").onclick=()=>{ order=null; Object.keys(cart).forEach(k=>cart[k]=0); view="cart"; render(); sync(); };
+  $("#newOrder").onclick=()=>{ order=null; receipt=null; Object.keys(cart).forEach(k=>cart[k]=0); view="cart"; render(); sync(); };
 }
 
 /* ---------- Cuenta regresiva ---------- */
@@ -610,6 +713,21 @@ function tick(){
 }
 tick(); setInterval(tick,30000);
 sync();
+
+/* ---------- Stickers: aparecen al hacer scroll y se pueden arrastrar ---------- */
+(function(){
+  const stks=[...document.querySelectorAll("[data-stk]")];
+  stks.forEach(el=>el.addEventListener("error",()=>el.remove()));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.3});
+  stks.forEach(el=>io.observe(el));
+  stks.forEach(el=>{
+    let sx,sy,ox=0,oy=0,moved=false;
+    el.addEventListener("pointerdown",e=>{ el.setPointerCapture(e.pointerId); el.classList.add("drag"); sx=e.clientX; sy=e.clientY; moved=false; });
+    el.addEventListener("pointermove",e=>{ if(!el.classList.contains("drag")) return; const dx=ox+e.clientX-sx, dy=oy+e.clientY-sy; moved=true; el.style.setProperty("--dx",dx+"px"); el.style.setProperty("--dy",dy+"px"); });
+    const end=e=>{ if(!el.classList.contains("drag")) return; el.classList.remove("drag"); ox+=e.clientX-sx; oy+=e.clientY-sy; };
+    el.addEventListener("pointerup",end); el.addEventListener("pointercancel",end);
+  });
+})();
 </script>
 </body>
 </html>

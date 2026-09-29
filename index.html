@@ -219,6 +219,12 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 .cartbar .sum{flex:1;font-weight:800;font-size:14px;line-height:1.2}
 .cartbar .sum small{display:block;font-weight:600;color:#555;font-size:12px}
 
+/* PEDIDOS PAUSADOS */
+.pausebar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:12px;background:var(--red);color:#000;border:3px solid #000;border-radius:999px;padding:12px 22px;box-shadow:0 16px 40px rgba(0,0,0,.6);font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;width:max-content;max-width:calc(100% - 32px);text-align:center;line-height:1.25}
+.pausebox{border:2px solid var(--red);border-radius:18px;padding:18px 22px;margin:0 0 26px;background:rgba(255,0,51,.08);font-weight:600;line-height:1.5}
+.pausebox b{color:var(--red);text-transform:uppercase;letter-spacing:.06em}
+body.paused .qty button[data-plus]{opacity:.35;cursor:not-allowed}
+
 /* PANEL DE PEDIDO */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.show{opacity:1;pointer-events:auto}
@@ -461,7 +467,8 @@ const CONFIG = {
   CARD_LINK: "",                         // Link de pago con tarjeta (Wompi/Bold). Vacío = no se muestra
   CARD_FEE_PCT: 0,                       // Recargo por pagar con tarjeta, en %. Ej: 1.8 (0 = sin recargo)
   TIKTOK: "https://www.tiktok.com/@esunvisio",
-  HALLOWEEN: new Date("2026-10-31T00:00:00-05:00")
+  HALLOWEEN: new Date("2026-10-31T00:00:00-05:00"),
+  PAUSA_HASTA: new Date("2026-10-02T00:00:00-05:00")   // Pedidos pausados hasta esta fecha (se reabren solos). null = abiertos
 };
 
 const FLAVORS = {
@@ -483,7 +490,21 @@ const cart = {choco:0,mango:0,mora:0};
 const count = () => Object.values(cart).reduce((a,b)=>a+b,0);
 const total = () => count() * CONFIG.PRICE;
 const panelOpen = () => $("#panel").classList.contains("show");
-function setQty(k,v){ cart[k] = Math.max(0,Math.min(50,v)); sync(); }
+const paused = () => !!CONFIG.PAUSA_HASTA && Date.now() < CONFIG.PAUSA_HASTA.getTime();
+const PAUSE_MSG = "Pedidos pausados · volvemos el viernes";
+function applyPause(){
+  const on = paused();
+  document.body.classList.toggle("paused", on);
+  let bar = $("#pausebar");
+  if (on && !bar){ bar=document.createElement("div"); bar.id="pausebar"; bar.className="pausebar"; bar.setAttribute("role","status"); bar.textContent=PAUSE_MSG; document.body.appendChild(bar); }
+  if (!on && bar) bar.remove();
+  let box = $("#pausebox");
+  if (on && !box){ box=document.createElement("div"); box.id="pausebox"; box.className="pausebox"; box.innerHTML="<b>Pedidos pausados.</b> Estamos preparando la siguiente tanda. Volvemos a recibir pedidos el viernes. Síguenos en Instagram para enterarte primero."; $("#flavors").before(box); }
+  if (!on && box) box.remove();
+  if (on) Object.keys(cart).forEach(k=>cart[k]=0);
+  return on;
+}
+function setQty(k,v){ if (applyPause()) { sync(); return; } cart[k] = Math.max(0,Math.min(50,v)); sync(); }
 function sync(){
   document.querySelectorAll("[data-q]").forEach(el => el.textContent = cart[el.dataset.q]);
   const c = count();
@@ -564,11 +585,16 @@ renderQ();
 /* ---------- Panel: pedido → datos → pago → listo ---------- */
 let view="cart", order=null, receipt=null;
 const form={nombre:"",telefono:"",instagram:"",direccion:"",barrio:"",notas:"",pago:""};
-function openPanel(){ view = order ? "done" : "cart"; $("#panel").classList.add("show"); $("#overlay").classList.add("show"); $("#panel").setAttribute("aria-hidden","false"); render(); sync(); }
+function openPanel(){ if (applyPause()){ view="paused"; } else view = order ? "done" : "cart"; $("#panel").classList.add("show"); $("#overlay").classList.add("show"); $("#panel").setAttribute("aria-hidden","false"); render(); sync(); }
 function closePanel(){ $("#panel").classList.remove("show"); $("#overlay").classList.remove("show"); $("#panel").setAttribute("aria-hidden","true"); sync(); }
 $("#closeCart").onclick=closePanel; $("#overlay").onclick=closePanel;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePanel(); });
-function render(){ ({cart:renderCart,form:renderForm,pay:renderPay,done:renderDone})[view](); $("#pbody").scrollTop=0; }
+function renderPaused(){
+  $("#panelTitle").textContent="Pedidos pausados";
+  $("#pbody").innerHTML=`<p class="note" style="font-size:16px;line-height:1.6;color:var(--cream)">Estamos preparando la siguiente tanda de VISIO.<br><br><b style="color:var(--red)">Volvemos a recibir pedidos el viernes.</b><br><br>Mientras tanto, síguenos en Instagram para enterarte primero.</p>`;
+  $("#pfoot").innerHTML=`<a class="btn btn-red" style="width:100%" href="https://instagram.com/${CONFIG.IG_USER}" target="_blank" rel="noopener">Ir a @${CONFIG.IG_USER}</a>`;
+}
+function render(){ if (view!=="paused" && view!=="done" && applyPause()) view="paused"; ({cart:renderCart,form:renderForm,pay:renderPay,done:renderDone,paused:renderPaused})[view](); $("#pbody").scrollTop=0; }
 const cardFee = () => Math.round(total()*CONFIG.CARD_FEE_PCT/100);
 
 function renderCart(){
@@ -680,6 +706,7 @@ function readReceipt(file){
 }
 
 async function submit(){
+  if (applyPause()){ view="paused"; render(); return; }
   const needsReceipt = form.pago!=="chat";
   if (needsReceipt && !receipt){ $("#err").textContent="Adjunta el comprobante de pago para confirmar."; return; }
   const code="VIS-"+Date.now().toString(36).slice(-4).toUpperCase()+Math.floor(Math.random()*90+10);
@@ -731,6 +758,7 @@ function tick(){
   $("#cd-m").textContent=String(Math.floor(ms/6e4)%60).padStart(2,"0");
 }
 tick(); setInterval(tick,30000);
+applyPause(); setInterval(applyPause, 60000);
 sync();
 
 /* ---------- Muro de stickers (desorden controlado) ---------- */

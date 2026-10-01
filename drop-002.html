@@ -223,7 +223,7 @@ main,nav,footer{position:relative;z-index:2}
 
 <footer class="footer wrap">
   <span>© <span id="yr"></span> VISIO · DROP-002</span>
-  <span><a href="index.html">Inicio</a> · <a href="https://www.instagram.com/esunvisio/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@esunvisio" target="_blank" rel="noopener">TikTok</a></span>
+  <span><a href="index.html">Inicio</a> · <a href="https://www.instagram.com/esunvisio/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.tiktok.com/@esunvisio" target="_blank" rel="noopener">TikTok</a> · <a href="privacidad.html">Datos</a> · <a href="terminos.html">Términos</a></span>
 </footer>
 
 <script>
@@ -243,7 +243,10 @@ const CLUES = [
   {n:"Archivo 003", t:"El ingrediente", c:"s", r:"-1deg", txt:"Una [[especia]] que lo cambia todo. Quien la prueba [[ya no mira igual]]."},
   {n:"Archivo 004", t:"La fecha", c:"w", r:"2deg", txt:"El fin del mundo tiene fecha. Casualmente [[cae en diciembre]]."},
   {n:"Archivo 005", t:"El formato", c:"g", r:"-1.5deg", txt:"No es galleta. Pero tiene [[el mismo ADN]]. Y se come con [[cuchara]], obvio."},
-  {n:"Archivo 006", t:"Clasificado", c:"", r:"1deg", txt:"Se abre con el trailer.", locked:true}
+  {n:"Archivo 006", t:"La arena", c:"s", r:"-1deg", txt:"No es arena. [[Cruje como galleta]]. Y [[huele a diciembre]].", from:"2026-10-12"},
+  {n:"Archivo 007", t:"El hilo", c:"s", r:"1.5deg", txt:"Algo dorado se estira [[y no se rompe]]. Nadie sabe [[dónde termina]].", from:"2026-10-19"},
+  {n:"Archivo 008", t:"La gota", c:"g", r:"-2deg", txt:"Roja. Cae [[despacio]]. Como si [[supiera algo]].", from:"2026-10-26"},
+  {n:"Archivo 009", t:"Clasificado", c:"", r:"1deg", txt:"Se abre con el trailer.", locked:true}
 ];
 /* Transmisión: líneas que se escriben solas */
 const LINES = [
@@ -264,6 +267,7 @@ $("#notifyBtn").href=dm("DROP002 — avísenme cuando salga el trailer.");
 
 /* Pistas */
 CLUES.forEach(c=>{
+  if(c.from && Date.now() < new Date(c.from+"T00:00:00-05:00").getTime()){ const [y,m,dd]=c.from.split("-"); c={...c, txt:"Se desclasifica el "+dd+"."+m+".", locked:true}; }
   const b=document.createElement("button");
   b.type="button"; b.className="file "+(c.locked?"locked-file":c.c); b.style.setProperty("--r",c.r);
   const txt=c.txt.replace(/\[\[(.+?)\]\]/g,'<span class="redact">$1</span>');

@@ -108,6 +108,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 .card.choco .top{background:linear-gradient(135deg,#3a1d0d,var(--choco))}
 .card.mango .top{background:linear-gradient(135deg,#ff8a00,var(--mango))}
 .card.mora .top{background:linear-gradient(135deg,#3b0f3e,var(--mora))}
+.card.pista .top{background:radial-gradient(90% 90% at 70% 30%,#7be3a6,#1FD37A 40%,#0b3d24)}
+.flavors.four{grid-template-columns:repeat(2,1fr)}
 .card .body{padding:26px;display:flex;flex-direction:column;gap:12px;flex:1}
 .card h3{font-family:var(--display);font-weight:400;font-size:44px;line-height:.9;text-transform:uppercase;margin:0}
 .card .line{font-family:var(--hand);color:var(--red);font-size:18px}
@@ -493,9 +495,9 @@ const CONFIG = {
   CARD_FEE_PCT: 0,                       // Recargo por pagar con tarjeta, en %. Ej: 1.8 (0 = sin recargo)
   TIKTOK: "https://www.tiktok.com/@esunvisio",
   HALLOWEEN: new Date("2026-10-31T12:00:00-05:00"),     // Reveal del Nº 04 (cuenta regresiva)
-  PAUSA_HASTA: new Date("2026-10-02T00:00:00-05:00"),   // Pedidos pausados hasta esta fecha (se reabren solos). null = abiertos
+  PAUSA_HASTA: null,   // Pedidos pausados hasta esta fecha (se reabren solos). null = abiertos
   N04_REVEAL: new Date("2026-10-31T12:00:00-05:00"),   // Desde aquí se muestra el nombre del sabor Nº 04
-  N04_NOMBRE: "YWlkaXZuRSBlZHJlVg==",                 // Nombre codificado para no filtrarlo antes del 31 (lo genera Claude)
+  N04_NOMBRE: "YWljaWxhTSBlZHJlVg==",                 // Nombre codificado para no filtrarlo antes del 31 (lo genera Claude)
   N04_NOTA: "b2hjYXRzaVA=",
   POLITICA_VERSION: "2026-10-01",
   TERMINOS_VERSION: "2026-10-01",
@@ -519,6 +521,13 @@ $("#yr").textContent = new Date().getFullYear();
 
 /* ---------- Pedido ---------- */
 const cart = {choco:0,mango:0,mora:0};
+/* Nº 04: desde el reveal se vende como un sabor más (mismo precio). El nombre va codificado para no filtrarse antes. */
+const N04_ON = Date.now() >= CONFIG.N04_REVEAL.getTime();
+const decN = t => { try{ return decodeURIComponent(escape(atob(t))).split("").reverse().join(""); }catch(e){ return ""; } };
+if (N04_ON){
+  FLAVORS.pista = {img:"",name:decN(CONFIG.N04_NOMBRE),note:decN(CONFIG.N04_NOTA),line:"Lo verde que anduvo suelto todo octubre.",desc:"Cookie cuchareable de pistacho. Crujiente, cremosa y con demasiada malicia para compartirla.",badge:"Nuevo",bg:"#1FD37A"};
+  cart.pista = 0;
+}
 const count = () => Object.values(cart).reduce((a,b)=>a+b,0);
 const total = () => count() * CONFIG.PRICE;
 const panelOpen = () => $("#panel").classList.contains("show");
@@ -555,6 +564,7 @@ document.addEventListener("click", e => {
 });
 
 /* ---------- Sabores ---------- */
+if (N04_ON) $("#flavors").classList.add("four");
 Object.entries(FLAVORS).forEach(([k,f],i) => {
   const el = document.createElement("article");
   el.className = "card " + k;
@@ -569,6 +579,7 @@ Object.entries(FLAVORS).forEach(([k,f],i) => {
 function renderN04(){
   const el=$("#n04"); if(!el) return;
   const rev = Date.now() >= CONFIG.N04_REVEAL.getTime();
+  if (rev && typeof N04_ON!=="undefined" && N04_ON){ el.style.display="none"; return; }
   const dec = t => { try{ return decodeURIComponent(escape(atob(t))).split("").reverse().join(""); }catch(e){ return ""; } };
   el.innerHTML = rev
     ? `<div class="dot" aria-hidden="true"></div><div class="txt"><span class="pill">Nº 04 · ${dec(CONFIG.N04_NOTA)} · Nuevo</span><h3>${dec(CONFIG.N04_NOMBRE)}</h3><p>Lo verde ya tiene nombre. Aparta el tuyo: escríbenos ${dec(CONFIG.N04_NOMBRE).toUpperCase()} por DM.</p></div><a class="when" href="https://ig.me/m/${CONFIG.IG_USER}?text=${encodeURIComponent(dec(CONFIG.N04_NOMBRE).toUpperCase()+" — quiero apartar el mío")}" target="_blank" rel="noopener">Apartar ↗</a>`

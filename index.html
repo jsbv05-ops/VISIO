@@ -462,9 +462,9 @@ body.paused .qty button[data-plus]{opacity:.35;cursor:not-allowed}
 
 <section id="halloween" class="drop wrap">
   <img class="stk" data-stk src="assets/stk-muelas-dj.webp" alt="" aria-hidden="true" draggable="false" style="--h:170px;--r:-10deg;left:2%;top:0">
-  <div class="label">Nº 04 · 31.10 · 12 m.</div>
+  <div class="label">Nº 04 · 23.10 · 12 m.</div>
   <h2 class="display">Algo verde<br>anda suelto.</h2>
-  <p>El 31 lo soltamos. No, no es de Halloween, aunque caiga ese día. ¿Qué crees que es? Escribe <strong>VERDE</strong> por DM con tu teoría y te avisamos primero.</p>
+  <p>El viernes 23 lo soltamos. ¿Qué crees que es? Escribe <strong>VERDE</strong> por DM con tu teoría y te avisamos primero.</p>
   <div class="count" id="count" aria-live="polite">
     <div><b id="cd-d">--</b><span>días</span></div>
     <div><b id="cd-h">--</b><span>horas</span></div>
@@ -528,9 +528,9 @@ const CONFIG = {
   CARD_LINK: "",                         // Link de pago con tarjeta (Wompi/Bold). Vacío = no se muestra
   CARD_FEE_PCT: 0,                       // Recargo por pagar con tarjeta, en %. Ej: 1.8 (0 = sin recargo)
   TIKTOK: "https://www.tiktok.com/@esunvisio",
-  HALLOWEEN: new Date("2026-10-31T12:00:00-05:00"),     // Reveal del Nº 04 (cuenta regresiva)
+  HALLOWEEN: new Date("2026-10-23T12:00:00-05:00"),     // Reveal del Nº 04 (cuenta regresiva)
   PAUSA_HASTA: null,   // Pedidos pausados hasta esta fecha (se reabren solos). null = abiertos
-  N04_REVEAL: new Date("2026-10-31T12:00:00-05:00"),   // Desde aquí se muestra el nombre del sabor Nº 04
+  N04_REVEAL: new Date("2026-10-23T12:00:00-05:00"),   // Desde aquí se muestra el nombre del sabor Nº 04
   N04_NOMBRE: "YWljaWxhTSBlZHJlVg==",                 // Nombre codificado para no filtrarlo antes del 31 (lo genera Claude)
   N04_NOTA: "b2hjYXRzaVA=",
   PUNTOS: {                                             // Puntos de entrega. "solo" = sabores que se pueden pedir ahí
@@ -540,7 +540,7 @@ const CONFIG = {
   POLITICA_VERSION: "2026-10-01",
   TERMINOS_VERSION: "2026-10-01",
   VERDE_DESDE: new Date("2026-10-12T00:00:00-05:00"),   // Aparece "algo verde" en la web…
-  VERDE_HASTA: new Date("2026-10-31T12:00:00-05:00")    // …hasta el reveal   // Pedidos pausados hasta esta fecha (se reabren solos). null = abiertos
+  VERDE_HASTA: new Date("2026-10-23T12:00:00-05:00")    // …hasta el reveal   // Pedidos pausados hasta esta fecha (se reabren solos). null = abiertos
 };
 
 const FLAVORS = {
@@ -657,7 +657,7 @@ function renderN04(){
   const dec = t => { try{ return decodeURIComponent(escape(atob(t))).split("").reverse().join(""); }catch(e){ return ""; } };
   el.innerHTML = rev
     ? `<div class="dot" aria-hidden="true"></div><div class="txt"><span class="pill">Nº 04 · ${dec(CONFIG.N04_NOTA)} · Nuevo</span><h3>${dec(CONFIG.N04_NOMBRE)}</h3><p>Lo verde ya tiene nombre. Aparta el tuyo: escríbenos ${dec(CONFIG.N04_NOMBRE).toUpperCase()} por DM.</p></div><a class="when" href="https://ig.me/m/${CONFIG.IG_USER}?text=${encodeURIComponent(dec(CONFIG.N04_NOMBRE).toUpperCase()+" — quiero apartar el mío")}" target="_blank" rel="noopener">Apartar ↗</a>`
-    : `<div class="dot" aria-hidden="true"></div><div class="txt"><span class="pill">Nº 04 · ???</span><h3>Algo verde anda suelto</h3><p>No sabemos qué es. Bueno… sí sabemos.</p></div><div class="when">31.10</div>`;
+    : `<div class="dot" aria-hidden="true"></div><div class="txt"><span class="pill">Nº 04 · ???</span><h3>Algo verde anda suelto</h3><p>No sabemos qué es. Bueno… sí sabemos.</p></div><div class="when">23.10</div>`;
 }
 renderN04(); setInterval(renderN04, 60000);
 

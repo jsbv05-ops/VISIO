@@ -293,6 +293,14 @@ body.paused .qty button[data-plus]{opacity:.35;cursor:not-allowed}
 .totals{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 4px}
 .totals b{font-family:var(--display);font-size:38px;font-weight:400}
 .note{font-size:13px;color:var(--muted);margin:0}
+.cupon{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+.cupon label{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cuprow{display:flex;gap:8px}
+.cuprow input{flex:1;min-width:0;background:#0d0c0c;border:1px solid var(--line);border-radius:12px;color:var(--cream);font:inherit;font-size:16px;padding:10px 12px;text-transform:uppercase}
+.cuprow input:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.cuprow .btn{padding:10px 16px;white-space:nowrap}
+.cupmsg{font-size:13px;margin:6px 0 0;min-height:18px;color:var(--muted)}
+.cupmsg.ok{color:#7fe0a8}.cupmsg.bad{color:#ff8a9c}
 .fields{display:grid;gap:12px;margin-top:22px}
 .fields label{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#cfc7b7;display:grid;gap:6px}
 .fields input,.fields textarea{background:#000;border:2px solid #2c2c2c;border-radius:12px;padding:13px 14px;color:var(--cream);font-size:16px;width:100%;text-transform:none;letter-spacing:0;font-weight:400}
@@ -522,7 +530,8 @@ body.paused .qty button[data-plus]{opacity:.35;cursor:not-allowed}
    CONFIGURACIÓN — cambia aquí los datos del negocio
    ===================================================================== */
 const CONFIG = {
-  PRICE: 10000,                          // precio por VISIO
+  PRICE: 10000,
+  CODIGOS: [ {c:"NjJBTklQ", min:20, precio:8000} ],   // Códigos de mayorista (codificados, los genera Claude). min = unidades mínimas; precio = valor por unidad                          // precio por VISIO
   IG_USER: "esunvisio",                  // Instagram
   CARD_URL: "https://take.cards/rnlUE",  // Tarjeta de sellos
   ORDERS_ENDPOINT: "https://script.google.com/macros/s/AKfycbwkjRi4CAH4cdP7e4NthRGovAb4idZV50vG2JbYwCxoh41AC3wAi7PQcRLvpErljSDdTQ/exec",                   // URL de la Hoja de Google (Apps Script). Vacío = no se guarda en la hoja
@@ -571,7 +580,12 @@ if (N04_ON){
   cart.pista = 0;
 }
 const count = () => Object.values(cart).reduce((a,b)=>a+b,0);
-const total = () => count() * CONFIG.PRICE;
+const normCod = t => String(t||"").toUpperCase().replace(/Ñ/g,"N").normalize("NFD").replace(/[^A-Z0-9]/g,"");
+let cupTxt = "", cupon = null;   // texto escrito y código válido (o null)
+const cupOn = () => !!cupon && count() >= cupon.min;
+const unitPrice = () => cupOn() ? cupon.precio : CONFIG.PRICE;
+const total = () => count() * unitPrice();
+function aplicarCupon(t){ cupTxt = String(t||"").trim().slice(0,20); const n = normCod(cupTxt); cupon = n ? (CONFIG.CODIGOS.find(c => decN(c.c) === n) || null) : null; }
 const panelOpen = () => $("#panel").classList.contains("show");
 const paused = () => !!CONFIG.PAUSA_HASTA && Date.now() < CONFIG.PAUSA_HASTA.getTime();
 const PAUSE_MSG = "Pedidos pausados · volvemos el viernes";
@@ -754,14 +768,22 @@ function renderPaused(){
 function render(){ if (view!=="paused" && view!=="done" && applyPause()) view="paused"; ({cart:renderCart,form:renderForm,pay:renderPay,done:renderDone,paused:renderPaused})[view](); $("#pbody").scrollTop=0; }
 const cardFee = () => Math.round(total()*CONFIG.CARD_FEE_PCT/100);
 
+function cupHTML(){
+  let msg="", cls="";
+  if (cupTxt && !cupon && normCod(cupTxt)) { msg="Ese código no existe."; cls="bad"; }
+  else if (cupon && cupOn()) { msg=`Código aplicado: ${money(cupon.precio)} cada uno.`; cls="ok"; }
+  else if (cupon) { const f=cupon.min-count(); msg=`Este código funciona desde ${cupon.min} unidades. Te falta${f===1?"":"n"} ${f}.`; cls="bad"; }
+  return `<div class="cupon"><label for="cupIn">¿Tienes un código?</label><div class="cuprow"><input id="cupIn" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20" value="${esc(cupTxt)}"><button type="button" class="btn btn-ghost" id="cupBtn">Aplicar</button></div><p class="cupmsg ${cls}" role="status">${msg}</p></div>`;
+}
 function renderCart(){
   $("#panelTitle").textContent="Tu pedido";
-  const row = k => `<div class="line-item"><div class="n">${FLAVORS[k].name}<small>${money(CONFIG.PRICE)} c/u</small></div>${qtyHTML(k,true)}</div>`;
+  const row = k => `<div class="line-item"><div class="n">${FLAVORS[k].name}<small>${money(unitPrice())} c/u</small></div>${qtyHTML(k,true)}</div>`;
   const rows = Object.keys(FLAVORS).filter(allowed).map(row).join("");
   const pl = punto ? `<p class="puntoline">Ciudad: <b style="color:var(--cream)">${CONFIG.PUNTOS[punto].nombre}</b> ·<button type="button" data-chg-punto>cambiar</button></p>` : "";
   $("#pbody").innerHTML = count()===0
     ? pl + `<p class="empty">Todavía no hay nada aquí.<br>Súmale VISIOS:</p>` + rows
-    : pl + rows + `<div class="totals"><span>Total</span><b>${money(total())}</b></div><p class="note">El domicilio se cuadra aparte por chat según tu dirección.</p>`;
+    : pl + rows + cupHTML() + `<div class="totals"><span>Total</span><b>${money(total())}</b></div><p class="note">El domicilio se cuadra aparte por chat según tu dirección.</p>`;
+  const ca=$("#cupBtn"); if (ca){ const go=()=>{ aplicarCupon($("#cupIn").value); renderCart(); const i=$("#cupIn"); if(i&&!cupOn()) i.focus(); }; ca.onclick=go; $("#cupIn").onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); go(); } }; $("#cupIn").oninput=e=>{ cupTxt=e.target.value; }; }
   $("#pfoot").innerHTML = `<button class="btn btn-red" style="width:100%" type="button" id="toForm" ${count()?"":"disabled"}>Continuar</button>`;
   $("#toForm").onclick=()=>{view="form";render();};
 }
@@ -879,7 +901,7 @@ async function submit(){
   const code=CONFIG.PUNTOS[punto].prefijo+"-"+Date.now().toString(36).slice(-4).toUpperCase()+Math.floor(Math.random()*90+10);
   const detalle=Object.keys(FLAVORS).filter(k=>cart[k]&&allowed(k)).map(k=>cart[k]+" "+FLAVORS[k].name).join(", ");
   const payName=(payOptions().find(o=>o[0]===form.pago)||[])[1]||"";
-  order={codigo:code,punto:CONFIG.PUNTOS[punto].nombre,fecha:new Date().toLocaleString("es-CO"),nombre:form.nombre,telefono:form.telefono,instagram:form.instagram.replace(/^@/,""),direccion:form.direccion,barrio:form.barrio,notas:form.notas,pedido:detalle,cantidad:count(),total:payTotal(),metodo:payName,estado:needsReceipt?"Comprobante recibido":"Pendiente de pago",autorizacion:"Sí · política "+CONFIG.POLITICA_VERSION+" · términos "+CONFIG.TERMINOS_VERSION+" · "+(form.aceptoFecha||new Date().toISOString())};
+  order={codigo:code,punto:CONFIG.PUNTOS[punto].nombre,fecha:new Date().toLocaleString("es-CO"),nombre:form.nombre,telefono:form.telefono,instagram:form.instagram.replace(/^@/,""),direccion:form.direccion,barrio:form.barrio,notas:(cupOn()?`[Código ${normCod(cupTxt)}: ${money(cupon.precio)} c/u] `:"")+form.notas,pedido:detalle,cantidad:count(),total:payTotal(),metodo:payName,estado:needsReceipt?"Comprobante recibido":"Pendiente de pago",autorizacion:"Sí · política "+CONFIG.POLITICA_VERSION+" · términos "+CONFIG.TERMINOS_VERSION+" · "+(form.aceptoFecha||new Date().toISOString())};
   $("#confirm").disabled=true; $("#confirm").textContent="Enviando…";
   order.guardado=false;
   if (CONFIG.ORDERS_ENDPOINT){

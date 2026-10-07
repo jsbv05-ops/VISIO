@@ -261,6 +261,11 @@ html.need-punto .gate{display:flex}
 html:not(.puntos-on) #puntoBtn,html:not(.puntos-on) [data-chg-punto],html:not(.puntos-on) .puntoline,html:not(.puntos-on) .solo-puntos{display:none!important}
 .recordar{margin-top:0}
 .olvidar{background:none;border:0;padding:0;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;text-align:left}
+.puntochip{display:inline-flex;align-items:center;gap:8px;background:rgba(242,234,216,.06);border:1px solid var(--line);border-radius:999px;color:var(--muted);font:inherit;font-size:13px;padding:8px 14px;margin:0 0 18px;cursor:pointer;max-width:100%}
+.puntochip i{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.puntochip b{color:var(--cream)}
+.puntochip u{color:var(--cream);text-underline-offset:3px}
+.puntochip:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 .puntoline{font-size:13px;color:var(--muted);margin:0 0 14px}
 .puntoline button{background:none;border:0;color:var(--cream);text-decoration:underline;font-size:13px;cursor:pointer;padding:0 0 0 4px}
 .puntobtn:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red)}
@@ -371,6 +376,7 @@ body.paused .qty button[data-plus]{opacity:.35;cursor:not-allowed}
 
 <header id="top" class="hero wrap">
   <div>
+    <button type="button" class="puntochip solo-puntos" data-chg-punto aria-label="Cambiar ciudad de entrega"><i aria-hidden="true"></i>Entregamos en <b id="puntoChip">tu ciudad</b><u>cambiar</u></button>
     <div class="label">Cookie cuchareable</div>
     <h1 class="display">¿Qué VISIO<span class="red">te da?</span></h1>
     <p class="sub">No es un postre. <strong>Es lo que te pasa después.</strong> Tres sabores y una sola regla: una cucharada nunca es suficiente.</p>
@@ -620,6 +626,7 @@ function showGate(on){
 function applyPunto(){
   if (punto) document.body.dataset.punto=punto; else delete document.body.dataset.punto;
   $("#puntoBtn").textContent = punto ? CONFIG.PUNTOS[punto].nombre : "Ciudad";
+  $("#puntoChip").textContent = punto ? CONFIG.PUNTOS[punto].nombre : "tu ciudad";
   const out = Object.keys(cart).filter(k=>!allowed(k) && cart[k]>0);
   out.forEach(k=>cart[k]=0);
   showGate(!punto);

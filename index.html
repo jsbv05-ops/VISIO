@@ -929,7 +929,7 @@ function orderText(){
 }
 function renderDone(){
   $("#panelTitle").textContent="¡Listo!";
-  const sendReceiptHere = receipt && !order.guardado;
+  const fallo = !order.guardado;
   $("#pbody").innerHTML=`<div class="done">
     <div class="label">Pedido recibido</div>
     <h3>Ya casi es tuyo, ${esc(order.nombre.split(" ")[0])}.</h3>
@@ -937,11 +937,10 @@ function renderDone(){
     <p class="note">${esc(order.pedido)} · <b style="color:var(--cream)">${money(order.total)}</b> + domicilio</p>
     <div class="label" style="margin-top:22px">Último paso</div>
     <ol class="stepsmini">
-      <li>Avísanos por Instagram con el botón de abajo${sendReceiptHere?" y adjunta la foto del comprobante en el chat":""}.</li>
+      <li>${fallo?`No pudimos registrar tu pedido desde la página. Escríbenos por DM a @${CONFIG.IG_USER} con tu código <b>${order.codigo}</b>${receipt?" y la foto del comprobante":""}.`:"Tu pedido ya nos llegó. No tienes que avisar por ningún lado."}</li>
       <li>${form.pago==="chat"?"Te mandamos los datos de pago y el valor del domicilio.":"Revisamos tu pago, te confirmamos el domicilio y sale tu VISIO."}</li>
     </ol></div>`;
-  $("#pfoot").innerHTML=`<a class="btn btn-red" style="width:100%" id="igDone" href="${dm(orderText())}" target="_blank" rel="noopener">Avisar por Instagram ↗</a><button class="again" style="display:block;margin:12px auto 0" type="button" id="newOrder">Hacer otro pedido</button>`;
-  $("#igDone").addEventListener("click",()=>{ try{navigator.clipboard.writeText(orderText());}catch(e){} });
+  $("#pfoot").innerHTML=(fallo?`<a class="btn btn-red" style="width:100%" href="https://instagram.com/${CONFIG.IG_USER}" target="_blank" rel="noopener">Ir a @${CONFIG.IG_USER} ↗</a>`:"")+`<button class="again" style="display:block;margin:12px auto 0" type="button" id="newOrder">Hacer otro pedido</button>`;
   $("#newOrder").onclick=()=>{ order=null; receipt=null; Object.keys(cart).forEach(k=>cart[k]=0); view="cart"; render(); sync(); };
 }
 
